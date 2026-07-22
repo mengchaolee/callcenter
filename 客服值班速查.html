@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>客服值班速查</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2530; --muted:#5b6b7b;
+    --line:#e3e8ee; --accent:#0a6cbf; --accent-soft:#e7f1fb;
+    --warn-bg:#fff4e5; --warn-ink:#8a5300; --warn-line:#ffd699;
+    --danger-bg:#fdecec; --danger-ink:#a12a2a; --danger-line:#f3b7b7;
+    --ok-bg:#e9f7ee; --ok-ink:#1d7a3d; --ok-line:#b7e2c6;
+    --code:#eef1f4; --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1419; --card:#1a2028; --ink:#e6edf3; --muted:#9aa7b4;
+      --line:#2a323c; --accent:#4aa3e8; --accent-soft:#12283c;
+      --warn-bg:#3a2c12; --warn-ink:#f0c674; --warn-line:#5c4720;
+      --danger-bg:#3a1c1c; --danger-ink:#f0a0a0; --danger-line:#5c2b2b;
+      --ok-bg:#16301f; --ok-ink:#8ed4a4; --ok-line:#2b5638;
+      --code:#232b34; --shadow:0 1px 3px rgba(0,0,0,.4);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Microsoft JhengHei","Noto Sans TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.65;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:24px 18px 64px}
+  header h1{font-size:1.55rem; margin:0 0 4px; display:flex; align-items:center; gap:.4em}
+  header p.sub{color:var(--muted); margin:0 0 20px; font-size:.9rem}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 20px; margin:0 0 18px; box-shadow:var(--shadow);
+  }
+  .card h2{
+    font-size:1.12rem; margin:0 0 12px; display:flex; align-items:center; gap:.45em;
+    padding-bottom:10px; border-bottom:1px solid var(--line);
+  }
+  .num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:1.6em; height:1.6em; border-radius:50%; font-size:.8em; font-weight:700;
+    background:var(--accent); color:#fff; flex:none;
+  }
+
+  ol,ul{margin:.2em 0; padding-left:1.4em}
+  li{margin:.28em 0}
+  ol.steps{list-style:none; padding-left:0; counter-reset:s}
+  ol.steps>li{counter-increment:s; position:relative; padding-left:2.1em; margin:.5em 0}
+  ol.steps>li::before{
+    content:counter(s); position:absolute; left:0; top:.05em;
+    width:1.5em; height:1.5em; border-radius:50%; background:var(--accent-soft);
+    color:var(--accent); font-weight:700; font-size:.82em;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  code,kbd{background:var(--code); border-radius:5px; padding:.08em .4em; font-size:.9em;
+    font-family:ui-monospace,SFMono-Regular,Consolas,monospace; word-break:break-all}
+
+  .note{border-radius:10px; padding:10px 14px; margin:10px 0; font-size:.95rem; border:1px solid}
+  .note.warn{background:var(--warn-bg); color:var(--warn-ink); border-color:var(--warn-line)}
+  .note.danger{background:var(--danger-bg); color:var(--danger-ink); border-color:var(--danger-line)}
+  .note.ok{background:var(--ok-bg); color:var(--ok-ink); border-color:var(--ok-line)}
+
+  .checklist{list-style:none; padding-left:0; margin:0}
+  .checklist li{display:flex; align-items:flex-start; gap:.6em; padding:8px 0; border-bottom:1px dashed var(--line)}
+  .checklist li:last-child{border-bottom:0}
+  .checklist .box{flex:none; width:1.25em; height:1.25em; border:2px solid var(--accent); border-radius:5px; margin-top:.15em}
+
+  .links{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px}
+  .links a{
+    display:flex; align-items:center; gap:.5em; text-decoration:none;
+    background:var(--accent-soft); color:var(--accent); font-weight:600;
+    border:1px solid var(--line); border-radius:10px; padding:12px 14px;
+  }
+  .links a:hover{filter:brightness(1.04)}
+  .links a .em{font-size:1.2em}
+  .links a.pending{background:var(--warn-bg); color:var(--warn-ink); border-color:var(--warn-line)}
+
+  footer{color:var(--muted); font-size:.82rem; text-align:center; margin-top:30px}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>📞 客服值班速查</h1>
+  <p class="sub">資訊室輪班接客服電話用。到位置先做上面三件事，接電話照下面各狀況處理。</p>
+</header>
+
+<!-- 到位置先做 -->
+<section class="card">
+  <h2>🟢 到客服位置先做</h2>
+  <ul class="checklist">
+    <li><span class="box"></span><span><strong>開好座位圖</strong>（要轉接時查分機用）</span></li>
+    <li><span class="box"></span><span><strong>開好 Teams</strong></span></li>
+    <li><span class="box"></span><span><strong>開好各系統負責人清單</strong></span></li>
+    <li><span class="box"></span><span><strong>看今天有誰請假</strong>（<a href="http://hr.kmuh.org.tw/calendar/calendar.asp" target="_blank" rel="noopener">員工出勤請假月報表</a>）</span></li>
+  </ul>
+</section>
+
+<!-- 常用連結 -->
+<section class="card">
+  <h2>🔗 常用連結</h2>
+  <div class="links">
+    <a href="https://docs.google.com/spreadsheets/d/1iap3C6ygFQr00ganMx9a8SIEdq-mOUqtA-bbTmUJ3oc/edit?gid=1468905289#gid=1468905289" target="_blank" rel="noopener"><span class="em">🪑</span>座位表</a>
+    <a href="https://docs.google.com/spreadsheets/d/15oyXzYCFdJ3SeEefelhq9rqNWZ1XQaDZH1TZBWTML-g/edit?gid=1115946585#gid=1115946585" target="_blank" rel="noopener"><span class="em">👤</span>系統負責人清單</a>
+    <a href="http://hr.kmuh.org.tw/calendar/calendar.asp" target="_blank" rel="noopener"><span class="em">🗓️</span>今日請假月報表</a>
+    <a href="https://docs.google.com/spreadsheets/d/1iap3C6ygFQr00ganMx9a8SIEdq-mOUqtA-bbTmUJ3oc/edit?gid=2030857301#gid=2030857301" target="_blank" rel="noopener"><span class="em">📅</span>Call Center 輪值表</a>
+    <a href="https://docs.google.com/spreadsheets/d/1IRUBVi5e79ZdYoFg6GZ4HE3UxSG_Bk3SB5Z6uH2bY88/edit?gid=1123059935#gid=1123059935" target="_blank" rel="noopener"><span class="em">📆</span>星期六值班表</a>
+  </div>
+</section>
+
+<!-- 接電話先做 -->
+<section class="card">
+  <h2>☎️ 接每通電話先問</h2>
+  <ul>
+    <li>對方是誰／哪個<strong>單位</strong>／<strong>分機</strong>幾號</li>
+  </ul>
+  <div class="note warn">課服系統<strong>沒顯示職編</strong>時 → 再跟對方確認 <strong>職編、單位、分機</strong>。</div>
+</section>
+
+<!-- 1 轉接 -->
+<section class="card">
+  <h2><span class="num">1</span>電話轉接</h2>
+  <p><strong>轉給別人（他人承辦）：</strong></p>
+  <ol class="steps">
+    <li>按<strong>第三顆 <kbd>Transfer</kbd></strong></li>
+    <li>先撥 <code>4945</code></li>
+    <li>再按<strong>對方分機</strong></li>
+    <li>確認是<strong>本人</strong>後，再按一次 <kbd>Transfer</kbd> 轉給他</li>
+  </ol>
+  <div class="note danger"><strong>轉不過去</strong> → 直接跟來電者說：「<strong>請承辦人聯絡他</strong>」。</div>
+</section>
+
+<!-- 2 OPD -->
+<section class="card">
+  <h2><span class="num">2</span>OPD 刪資料</h2>
+  <p>做法：<strong>遠端連到對方電腦</strong>（連線密碼 ＝ <strong>自己的員編</strong>）。</p>
+  <ul>
+    <li><strong>跨月自費</strong> → ✅ 可以直接刪</li>
+    <li><strong>跨月健保</strong> → ⚠️ 要先<strong>確認醫事室有沒有同意</strong>才能刪</li>
+  </ul>
+</section>
+
+<!-- 3 虛擬健保卡 -->
+<section class="card">
+  <h2><span class="num">3</span>虛擬健保卡程式錯誤（找不到 ffmpeg.dll）</h2>
+  <div class="note warn"><strong>OPD 3 點</strong>最常發生，其他門診也有。</div>
+  <p><strong>症狀：</strong><code>虛擬健保卡控制軟體.exe – 系統錯誤</code>，訊息說<strong>找不到 <code>ffmpeg.dll</code></strong>、程式無法繼續。</p>
+  <p><strong>處理：</strong></p>
+  <ol class="steps">
+    <li>砍掉暫存資料夾 <code>C:\Users\user\AppData\Local\Temp\C</code></li>
+    <li>重新帶起 <code>虛擬健保卡控制軟體.exe</code>：桌面<strong>捷徑</strong>，或執行 <code>C:\VHCSDK\restartvhc.cmd</code></li>
+  </ol>
+</section>
+
+<!-- 4 硬體 -->
+<section class="card">
+  <h2><span class="num">4</span>硬體問題</h2>
+  <p>判斷是硬體問題 → <strong>派工</strong>處理（不在電話裡自己修）。</p>
+</section>
+
+<footer>
+  最後更新 2026-07-22 · 主檔：<code>Knowledge/流程-客服值班接電話手冊.md</code>
+</footer>
+
+</div>
+</body>
+</html>
